@@ -10,7 +10,7 @@ export const Stories: React.FC = () => {
     fetchStories().then((stories) => {
       if (stories) {
         const promiseData: Promise<storyPayload | null>[] = stories
-          .slice(0, 5)
+          .slice(0, 6)
           .map(async (storyId) => {
             if (!storyId) return null;
             const story = await fetchStory(storyId);
