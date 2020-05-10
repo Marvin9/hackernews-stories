@@ -1,7 +1,7 @@
 import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const loader = require('../../loader.gif');
+const loader = require('../../../loader.gif');
 
 export const Loader: React.FC<{ mini?: boolean }> = ({ mini }) => (
   <img

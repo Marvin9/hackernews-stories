@@ -1,36 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from 'rebass';
-import styled, { keyframes } from 'styled-components';
 
 import { fetchStories, fetchStory, storyPayload } from '../helpers';
-import { Loader } from './Loader';
+import { Loader } from './components/Loader';
+import { Story } from './components/Story';
 
-const enterKeyFrames = keyframes`
-  from {
-    opacity: 0;
-  }
+interface StoriesProps {
+  fontTitleIncrement?: number;
+  storiesOffset?: number;
+  maxFontSize?: number;
+}
 
-  to {
-    opacity: 1;
-    right: -3px;
-  }
-`;
+export const Stories: React.FC<StoriesProps> = ({ fontTitleIncrement = 3, storiesOffset = 5, maxFontSize = 30 }) => {
+  const offset = storiesOffset;
+  const increment = fontTitleIncrement;
+  const maxFont = maxFontSize;
 
-const BoxAnimation = styled(Box)<{ delay: number }>`
-  animation: ${enterKeyFrames} 0.5s ease;
-  animation-delay: ${(props): number => props.delay * 0.1}s;
-  animation-fill-mode: forwards;
-`;
-
-export const Stories: React.FC = () => {
-  const offset = 5;
   const [storyIds, setStoryIds] = useState<number[]>([]);
   const [data, updateData] = useState<(storyPayload | null)[]>([]);
   const [score, updateScore] = useState<{ [score: number]: number }>({});
   const [miniLoader, injectMiniLoader] = useState<boolean>(false);
-
-  const increment = 3;
-  const maxFont = 30;
 
   const getNStories = (disableLoader?: boolean): void => {
     const promiseData: Promise<storyPayload | null>[] = storyIds
@@ -49,6 +38,7 @@ export const Stories: React.FC = () => {
   };
 
   const initialMountStory = React.useRef(true);
+  // fetch story IDs
   useEffect(() => {
     if (initialMountStory.current) {
       initialMountStory.current = false;
@@ -60,6 +50,7 @@ export const Stories: React.FC = () => {
     }
   }, []);
 
+  // If scroll to end of screen, Load more story
   const updateOnEndScroll = (): any => {
     const body = document.querySelector('body');
     if (body && window.innerHeight + window.scrollY >= body.clientHeight) {
@@ -69,6 +60,7 @@ export const Stories: React.FC = () => {
     }
   };
 
+  // once all story IDs are fetched, get content of each ${offset} stories
   const initialMount = React.useRef(true);
   useEffect(() => {
     if (initialMount.current) {
@@ -85,13 +77,16 @@ export const Stories: React.FC = () => {
     return (): void => window.removeEventListener('scroll', updateOnEndScroll);
   }, [data]);
 
+  // Decide font size for each title of story
   useEffect(() => {
     if (initialMount.current) {
       initialMount.current = false;
     } else {
+      // minimum font size 13
       let base = 13;
       let tempScore = {};
 
+      // store each score
       data.forEach((sc) => {
         if (sc) {
           tempScore = {
@@ -101,6 +96,9 @@ export const Stories: React.FC = () => {
         }
       });
 
+      // keys(scores) will be in increased order
+      // Iterate each of them and update score value to ${increment} from base
+      // increment base as well
       Object.keys(tempScore).forEach((sc) => {
         tempScore = {
           ...tempScore,
@@ -109,6 +107,7 @@ export const Stories: React.FC = () => {
         base += increment;
       });
 
+      // finally update inject score
       updateScore(tempScore);
     }
   }, [data]);
@@ -121,51 +120,16 @@ export const Stories: React.FC = () => {
             columnCount: [1, 1, 3],
           }}
           py={[3]}
-          px={[1, 2, 4]}
+          px={[0, 0, 4]}
         >
           {data.map((story, ind) =>
             story ? (
-              <BoxAnimation
-                delay={ind % offset}
-                sx={{
-                  position: 'relative',
-                  right: '3px',
-                  opacity: 0,
-                  wordBreak: 'break-word',
-                  pageBreakInside: 'avoid',
-                  breakInside: 'avoid',
-                  ':-webkit-column-break-inside': 'avoid',
-                  boxShadow: '3px 4px 10px -5px rgba(0,0,0,0.75)',
-                  cursor: 'pointer',
-                  '&: hover': {
-                    boxShadow: '3px 4px 11px -4px rgba(0,0,0,0.75)',
-                  },
-                  transition: '0.5s',
-                  ...story.theme,
+              <Story story={story} animationDelay={ind % offset} titleFontSize={Math.min(score[story.score], maxFont)}>
+                {{
+                  title: story.title,
+                  content: story.text,
                 }}
-                my={4}
-                mx={2}
-                p={4}
-                key={story.title}
-              >
-                <b
-                  style={{
-                    fontSize: `${Math.min(score[story.score], maxFont)}px`,
-                  }}
-                >
-                  {story.title}
-                </b>
-
-                <br />
-                <br />
-
-                <div
-                  // eslint-disable-next-line react/no-danger
-                  dangerouslySetInnerHTML={{
-                    __html: story.text,
-                  }}
-                />
-              </BoxAnimation>
+              </Story>
             ) : (
               <>Null</>
             ),
