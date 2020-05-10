@@ -55,7 +55,7 @@ export const Stories: React.FC = () => {
     }
   }, []);
 
-  const updateOnEndScroll = (e: Event): any => {
+  const updateOnEndScroll = (): any => {
     const body = document.querySelector('body');
     if (body && window.innerHeight + window.scrollY >= body.clientHeight) {
       getNStories();
