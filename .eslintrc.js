@@ -41,6 +41,7 @@ module.exports = {
     'react/jsx-filename-extension': 'off',
     'prettier/prettier': 'error',
     'import/extensions': 'off',
-    'import/prefer-default-export': 'off'
+    'import/prefer-default-export': 'off',
+    'react/jsx-props-no-spreading': 'off'
   },
 };

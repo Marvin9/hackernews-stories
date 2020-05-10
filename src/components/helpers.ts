@@ -1,3 +1,6 @@
+import { SxStyleProp } from 'rebass';
+import { RandomBoxStyle } from './Stories/styles';
+
 const API_PREFIX = 'https://hacker-news.firebaseio.com/v0';
 
 export const HN_STORIES_API = `${API_PREFIX}/askstories.json`;
@@ -18,6 +21,8 @@ export const fetchStories = async (): Promise<number[] | null> => {
 export type storyPayload = {
   title: string;
   text: string;
+  score: number;
+  theme: SxStyleProp;
   [otherKeys: string]: any;
 };
 
@@ -29,6 +34,8 @@ export const fetchStory = async (storyId: number): Promise<storyPayload | null> 
     return {
       title: story.title,
       text: story.text,
+      score: story.score,
+      theme: RandomBoxStyle(),
     };
   } catch (e) {
     console.error(e);
