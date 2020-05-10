@@ -1,6 +1,9 @@
-import { SxStyleProp } from 'rebass';
+export type theme = {
+  backgroundColor: string;
+  color: string;
+};
 
-export const BoxStyles: SxStyleProp[] = [
+export const BoxStyles: theme[] = [
   {
     backgroundColor: '#2191FB',
     color: 'white',
@@ -27,4 +30,4 @@ export const BoxStyles: SxStyleProp[] = [
   },
 ];
 
-export const RandomBoxStyle = (): SxStyleProp => BoxStyles[Math.floor(Math.random() * BoxStyles.length)];
+export const RandomBoxStyle = (): theme => BoxStyles[Math.floor(Math.random() * BoxStyles.length)];

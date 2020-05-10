@@ -1,5 +1,4 @@
-import { SxStyleProp } from 'rebass';
-import { RandomBoxStyle } from './Stories/styles';
+import { RandomBoxStyle, theme } from './Stories/styles';
 
 const API_PREFIX = 'https://hacker-news.firebaseio.com/v0';
 
@@ -22,7 +21,7 @@ export type storyPayload = {
   title: string;
   text: string;
   score: number;
-  theme: SxStyleProp;
+  theme: theme;
   [otherKeys: string]: any;
 };
 
