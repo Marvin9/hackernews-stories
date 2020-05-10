@@ -42,6 +42,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
-    'react/jsx-props-no-spreading': 'off'
+    'react/jsx-props-no-spreading': 'off',
+    'react/prop-types': 'off',
   },
 };

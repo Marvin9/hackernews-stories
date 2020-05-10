@@ -3,6 +3,7 @@ import { Box } from 'rebass';
 import styled, { keyframes } from 'styled-components';
 
 import { fetchStories, fetchStory, storyPayload } from '../helpers';
+import { Loader } from './Loader';
 
 const enterKeyFrames = keyframes`
   from {
@@ -26,10 +27,12 @@ export const Stories: React.FC = () => {
   const [storyIds, setStoryIds] = useState<number[]>([]);
   const [data, updateData] = useState<(storyPayload | null)[]>([]);
   const [score, updateScore] = useState<{ [score: number]: number }>({});
+  const [miniLoader, injectMiniLoader] = useState<boolean>(false);
+
   const increment = 3;
   const maxFont = 30;
 
-  const getNStories = (): void => {
+  const getNStories = (disableLoader?: boolean): void => {
     const promiseData: Promise<storyPayload | null>[] = storyIds
       .slice(data.length, data.length + offset)
       .map(async (storyId) => {
@@ -39,6 +42,8 @@ export const Stories: React.FC = () => {
       });
 
     Promise.all(promiseData).then((storiesPayload) => {
+      if (disableLoader) injectMiniLoader(false);
+
       updateData([...data, ...storiesPayload]);
     });
   };
@@ -58,7 +63,8 @@ export const Stories: React.FC = () => {
   const updateOnEndScroll = (): any => {
     const body = document.querySelector('body');
     if (body && window.innerHeight + window.scrollY >= body.clientHeight) {
-      getNStories();
+      injectMiniLoader(true);
+      getNStories(true);
       window.removeEventListener('scroll', updateOnEndScroll);
     }
   };
@@ -109,63 +115,67 @@ export const Stories: React.FC = () => {
 
   if (data.length) {
     return (
-      <Box
-        sx={{
-          columnCount: [1, 2, 3],
-        }}
-        py={[3]}
-        px={[1, 2, 4]}
-      >
-        {data.map((story, ind) =>
-          story ? (
-            <BoxAnimation
-              delay={ind % offset}
-              sx={{
-                position: 'relative',
-                right: '3px',
-                opacity: 0,
-                wordBreak: 'break-word',
-                pageBreakInside: 'avoid',
-                breakInside: 'avoid',
-                ':-webkit-column-break-inside': 'avoid',
-                boxShadow: '3px 4px 10px -5px rgba(0,0,0,0.75)',
-                cursor: 'pointer',
-                '&: hover': {
-                  boxShadow: '3px 4px 11px -4px rgba(0,0,0,0.75)',
-                },
-                transition: '0.5s',
-                ...story.theme,
-              }}
-              my={4}
-              mx={2}
-              p={4}
-              key={story.title}
-            >
-              <b
-                style={{
-                  fontSize: `${Math.min(score[story.score], maxFont)}px`,
+      <>
+        <Box
+          sx={{
+            columnCount: [1, 2, 3],
+          }}
+          py={[3]}
+          px={[1, 2, 4]}
+        >
+          {data.map((story, ind) =>
+            story ? (
+              <BoxAnimation
+                delay={ind % offset}
+                sx={{
+                  position: 'relative',
+                  right: '3px',
+                  opacity: 0,
+                  wordBreak: 'break-word',
+                  pageBreakInside: 'avoid',
+                  breakInside: 'avoid',
+                  ':-webkit-column-break-inside': 'avoid',
+                  boxShadow: '3px 4px 10px -5px rgba(0,0,0,0.75)',
+                  cursor: 'pointer',
+                  '&: hover': {
+                    boxShadow: '3px 4px 11px -4px rgba(0,0,0,0.75)',
+                  },
+                  transition: '0.5s',
+                  ...story.theme,
                 }}
+                my={4}
+                mx={2}
+                p={4}
+                key={story.title}
               >
-                {story.title}
-              </b>
+                <b
+                  style={{
+                    fontSize: `${Math.min(score[story.score], maxFont)}px`,
+                  }}
+                >
+                  {story.title}
+                </b>
 
-              <br />
-              <br />
+                <br />
+                <br />
 
-              <div
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{
-                  __html: story.text,
-                }}
-              />
-            </BoxAnimation>
-          ) : (
-            <>Null</>
-          ),
-        )}
-      </Box>
+                <div
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{
+                    __html: story.text,
+                  }}
+                />
+              </BoxAnimation>
+            ) : (
+              <>Null</>
+            ),
+          )}
+        </Box>
+        <br />
+        {miniLoader && <Loader mini />}
+      </>
     );
   }
 
-  return <div>Loading...</div>;
+  return <Loader />;
 };
