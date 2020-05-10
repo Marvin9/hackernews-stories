@@ -16,8 +16,10 @@ export const Loader: React.FC<{ mini?: boolean }> = ({ mini }) => (
             transform: 'translate(-50%, -50%)',
           }
         : {
-            position: 'absolute',
+            position: 'fixed',
+            bottom: '-10px',
             left: '50%',
+            transform: 'translateX(-50%)',
             height: '64px',
           }
     }

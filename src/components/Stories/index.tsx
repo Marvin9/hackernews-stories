@@ -118,7 +118,7 @@ export const Stories: React.FC = () => {
       <>
         <Box
           sx={{
-            columnCount: [1, 2, 3],
+            columnCount: [1, 1, 3],
           }}
           py={[3]}
           px={[1, 2, 4]}
@@ -171,7 +171,6 @@ export const Stories: React.FC = () => {
             ),
           )}
         </Box>
-        <br />
         {miniLoader && <Loader mini />}
       </>
     );
