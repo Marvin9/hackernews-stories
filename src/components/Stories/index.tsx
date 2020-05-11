@@ -51,7 +51,7 @@ export const Stories: React.FC<StoriesProps> = ({ fontTitleIncrement = 3, storie
   }, []);
 
   // If scroll to end of screen, Load more story
-  const updateOnEndScroll = (): any => {
+  const updateOnEndScroll = (): void => {
     const body = document.querySelector('body');
     if (body && window.innerHeight + window.scrollY >= body.clientHeight) {
       injectMiniLoader(true);
